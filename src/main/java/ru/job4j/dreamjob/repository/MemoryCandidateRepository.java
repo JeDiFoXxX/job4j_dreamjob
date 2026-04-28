@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class MemoryCandidateRepository implements CandidateRepository {
@@ -35,6 +36,23 @@ public class MemoryCandidateRepository implements CandidateRepository {
         candidate.setId(nextId++);
         candidates.put(candidate.getId(), candidate);
         return candidate;
+    }
+
+    @Override
+    public boolean deleteById(int id) {
+        return candidates.remove(id) != null;
+    }
+
+    @Override
+    public boolean update(Candidate candidate) {
+        return candidates.computeIfPresent(candidate.getId(),
+                (id, oldCandidate) -> new Candidate(oldCandidate.getId(), candidate.getName(),
+                        candidate.getDescription(), candidate.getCreationDate())) != null;
+    }
+
+    @Override
+    public Optional<Candidate> findById(int id) {
+        return Optional.ofNullable(candidates.get(id));
     }
 
     @Override
