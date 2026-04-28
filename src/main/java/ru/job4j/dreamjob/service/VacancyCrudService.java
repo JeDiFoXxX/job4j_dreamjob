@@ -1,5 +1,6 @@
 package ru.job4j.dreamjob.service;
 
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.job4j.dreamjob.model.Vacancy;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
+@ThreadSafe
 public class VacancyCrudService implements CrudService<Vacancy> {
 
     @Autowired
