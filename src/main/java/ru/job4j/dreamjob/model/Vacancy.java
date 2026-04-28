@@ -13,6 +13,8 @@ public class Vacancy {
 
     private LocalDateTime creationDate;
 
+    public Vacancy() { }
+
     public Vacancy(int id, String title) {
         this.id = id;
         this.title = title;
