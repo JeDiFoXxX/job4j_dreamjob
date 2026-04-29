@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.dreamjob.model.User;
 import ru.job4j.dreamjob.repository.UserRepository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -13,11 +13,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> findByEmailAndPassword(String email, String password) {
+    public Optional<User> findByEmailAndPassword(String email, String password) {
         return userRepository.findByEmailAndPassword(email, password);
     }
 
-    public List<User> save(User user) {
-        return List.of(userRepository.save(user));
+    public Optional<User> save(User user) {
+        return Optional.of(userRepository.save(user));
     }
 }
