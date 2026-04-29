@@ -13,19 +13,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @ThreadSafe
-public class MemoryCandidateRepository implements CandidateRepository {
+public class MemoryCandidateRepository implements CrudRepository<Candidate> {
 
     private AtomicInteger nextId = new AtomicInteger(1);
 
     private final Map<Integer, Candidate> candidates = new ConcurrentHashMap<>();
 
     private MemoryCandidateRepository() {
-        save(new Candidate(0, "Ivan Ivanov", "text", LocalDateTime.now()));
-        save(new Candidate(0, "Petr Petrov", "text", LocalDateTime.now()));
-        save(new Candidate(0, "Alexey Sidorov", "text", LocalDateTime.now()));
-        save(new Candidate(0, "Sergey Smirnov", "text", LocalDateTime.now()));
-        save(new Candidate(0, "Dmitry Kozlov", "text", LocalDateTime.now()));
-        save(new Candidate(0, "Andrey Volkov", "text", LocalDateTime.now()));
+        save(new Candidate(0, "Ivan Ivanov", "text", LocalDateTime.now(), 1));
+        save(new Candidate(0, "Petr Petrov", "text", LocalDateTime.now(), 1));
+        save(new Candidate(0, "Alexey Sidorov", "text", LocalDateTime.now(), 1));
+        save(new Candidate(0, "Sergey Smirnov", "text", LocalDateTime.now(), 1));
+        save(new Candidate(0, "Dmitry Kozlov", "text", LocalDateTime.now(), 1));
+        save(new Candidate(0, "Andrey Volkov", "text", LocalDateTime.now(), 1));
     }
 
     @Override
@@ -43,8 +43,9 @@ public class MemoryCandidateRepository implements CandidateRepository {
     @Override
     public boolean update(Candidate candidate) {
         return candidates.computeIfPresent(candidate.getId(),
-                (id, oldCandidate) -> new Candidate(oldCandidate.getId(), candidate.getName(),
-                        candidate.getDescription(), candidate.getCreationDate())) != null;
+                (id, oldCandidate) -> new Candidate(oldCandidate.getId(),
+                        candidate.getName(), candidate.getDescription(),
+                        candidate.getCreationDate(), candidate.getCityId())) != null;
     }
 
     @Override

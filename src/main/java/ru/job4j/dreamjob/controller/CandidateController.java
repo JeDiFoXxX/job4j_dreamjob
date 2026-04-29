@@ -6,7 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.dreamjob.model.Candidate;
-import ru.job4j.dreamjob.service.CandidateCrudService;
+import ru.job4j.dreamjob.service.CandidateService;
+import ru.job4j.dreamjob.service.CityService;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +16,10 @@ import java.time.LocalDateTime;
 @ThreadSafe
 public class CandidateController {
     @Autowired
-    private CandidateCrudService candidateService;
+    private CandidateService candidateService;
+
+    @Autowired
+    private CityService cityService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -24,7 +28,8 @@ public class CandidateController {
     }
 
     @GetMapping("/create")
-    public String getCreationPage() {
+    public String getCreationPage(Model model) {
+        model.addAttribute("cities", cityService.findAll());
         return "candidates/create";
     }
 
@@ -42,6 +47,7 @@ public class CandidateController {
             model.addAttribute("message", "Кандидат с указанным идентификатором не найден");
             return "errors/404";
         }
+        model.addAttribute("cities", cityService.findAll());
         model.addAttribute("candidate", candidateOptional.get());
         return "candidates/one";
     }

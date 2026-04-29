@@ -11,12 +11,12 @@ import java.util.Optional;
 
 @Service
 @ThreadSafe
-public class VacancyCrudService implements CrudService<Vacancy> {
+public class VacancyService implements CrudService<Vacancy> {
 
     @Autowired
     private MemoryVacancyRepository memoryVacancyRepository;
 
-    private VacancyCrudService() { }
+    private VacancyService() { }
 
     @Override
     public Vacancy save(Vacancy vacancy) {

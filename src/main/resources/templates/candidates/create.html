@@ -12,8 +12,14 @@
         </div>
         <div class="mb-3">
             <label for="description" class="form-label"><b>Информация о кандидате</b></label>
-            <textarea class="form-control" id="description" name="description" rows="20"
+            <textarea class="form-control" id="description" name="description" rows="10"
                       placeholder="О себе"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="city"><b>Город</b></label>
+            <select class="form-control" id="city" name="cityId">
+                <option th:each="city : ${cities}" th:value="${city.id}" th:text="${city.name}"></option>
+            </select>
         </div>
         <div class="mb-3 row">
             <div class="col-6"></div>
