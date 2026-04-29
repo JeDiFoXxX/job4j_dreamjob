@@ -16,7 +16,11 @@ public class VacancyService implements CrudService<Vacancy> {
     @Autowired
     private MemoryVacancyRepository memoryVacancyRepository;
 
-    private VacancyService() { }
+    @Autowired
+    private SimpleFileService fileService;
+
+    private VacancyService() {
+    }
 
     @Override
     public Vacancy save(Vacancy vacancy) {
@@ -25,7 +29,13 @@ public class VacancyService implements CrudService<Vacancy> {
 
     @Override
     public boolean deleteById(int id) {
-        return memoryVacancyRepository.deleteById(id);
+        var rsl = false;
+        var fileOptional = findById(id);
+        if (fileOptional.isPresent()) {
+            rsl = memoryVacancyRepository.deleteById(id);
+            fileService.deleteById(fileOptional.get().getFileId());
+        }
+        return rsl;
     }
 
     @Override

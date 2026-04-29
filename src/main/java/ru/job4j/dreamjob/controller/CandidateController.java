@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Candidate;
 import ru.job4j.dreamjob.service.CandidateService;
 import ru.job4j.dreamjob.service.CityService;
+import ru.job4j.dreamjob.service.SimpleFileService;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +23,9 @@ public class CandidateController {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private SimpleFileService fileService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -34,17 +40,25 @@ public class CandidateController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Candidate candidate) {
-        candidate.setCreationDate(LocalDateTime.now());
-        candidateService.save(candidate);
-        return "redirect:/candidates";
+    public String create(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            var fileDto = new FileDto(file.getOriginalFilename(), file.getBytes());
+            candidate.setFileId(fileService.save(fileDto).getId());
+            candidate.setCreationDate(LocalDateTime.now());
+            candidateService.save(candidate);
+            return "redirect:/candidates";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
         var candidateOptional = candidateService.findById(id);
         if (candidateOptional.isEmpty()) {
-            model.addAttribute("message", "Кандидат с указанным идентификатором не найден");
+            model.addAttribute("message",
+                    "Кандидат с указанным идентификатором не найден");
             return "errors/404";
         }
         model.addAttribute("cities", cityService.findAll());
@@ -53,14 +67,25 @@ public class CandidateController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Candidate candidate, Model model) {
-        candidate.setCreationDate(LocalDateTime.now());
-        var isUpdated = candidateService.update(candidate);
-        if (!isUpdated) {
-            model.addAttribute("message", "Кандидат с указанным идентификатором не найден");
+    public String update(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            var fileDto = new FileDto(file.getOriginalFilename(), file.getBytes());
+            var isEmpty = fileDto.getContent().length == 0;
+            if (!isEmpty) {
+                fileService.update(candidate.getFileId(), fileDto);
+            }
+            candidate.setCreationDate(LocalDateTime.now());
+            var isUpdated = candidateService.update(candidate);
+            if (!isUpdated) {
+                model.addAttribute("message",
+                        "Кандидат с указанным идентификатором не найден");
+                return "errors/404";
+            }
+            return "redirect:/candidates";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
-        return "redirect:/candidates";
     }
 
     @GetMapping("/delete/{id}")

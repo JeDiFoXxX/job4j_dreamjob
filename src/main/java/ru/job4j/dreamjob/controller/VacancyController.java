@@ -5,8 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Vacancy;
 import ru.job4j.dreamjob.service.CityService;
+import ru.job4j.dreamjob.service.FileService;
+import ru.job4j.dreamjob.service.SimpleFileService;
 import ru.job4j.dreamjob.service.VacancyService;
 
 import java.time.LocalDateTime;
@@ -22,6 +26,9 @@ public class VacancyController {
     @Autowired
     private CityService cityService;
 
+    @Autowired
+    private SimpleFileService fileService;
+
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("vacancies", vacancyService.findAll());
@@ -35,10 +42,17 @@ public class VacancyController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Vacancy vacancy) {
-        vacancy.setCreationDate(LocalDateTime.now());
-        vacancyService.save(vacancy);
-        return "redirect:/vacancies";
+    public String create(@ModelAttribute Vacancy vacancy, @RequestParam MultipartFile file, Model model) {
+        try {
+            var fileDto = new FileDto(file.getOriginalFilename(), file.getBytes());
+            vacancy.setFileId(fileService.save(fileDto).getId());
+            vacancy.setCreationDate(LocalDateTime.now());
+            vacancyService.save(vacancy);
+            return "redirect:/vacancies";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
+            return "errors/404";
+        }
     }
 
     @GetMapping("/{id}")
@@ -54,14 +68,24 @@ public class VacancyController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Vacancy vacancy, Model model) {
-        vacancy.setCreationDate(LocalDateTime.now());
-        var isUpdated = vacancyService.update(vacancy);
-        if (!isUpdated) {
-            model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
+    public String update(@ModelAttribute Vacancy vacancy, @RequestParam MultipartFile file, Model model) {
+        try {
+            var fileDto = new FileDto(file.getOriginalFilename(), file.getBytes());
+            var isEmpty = fileDto.getContent().length == 0;
+            if (!isEmpty) {
+                fileService.update(vacancy.getFileId(), fileDto);
+            }
+            vacancy.setCreationDate(LocalDateTime.now());
+            var isUpdated = vacancyService.update(vacancy);
+            if (!isUpdated) {
+                model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
+                return "errors/404";
+            }
+            return "redirect:/vacancies";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
-        return "redirect:/vacancies";
     }
 
     @GetMapping("/delete/{id}")

@@ -1,0 +1,22 @@
+package ru.job4j.dreamjob.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+@Configuration
+public class Config {
+    @Bean
+    public String storageDirectory(@Value("${file.directory}") String path) {
+        try {
+            Files.createDirectories(Path.of(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return path;
+    }
+}

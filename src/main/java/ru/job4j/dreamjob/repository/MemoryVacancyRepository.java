@@ -21,17 +21,17 @@ public class MemoryVacancyRepository implements CrudRepository<Vacancy> {
 
     private MemoryVacancyRepository() {
         save(new Vacancy(0, "Intern Java Developer", "text",
-                LocalDateTime.now(), false, 1));
+                LocalDateTime.now(), false, 1, 0));
         save(new Vacancy(0, "Junior Java Developer", "text",
-                LocalDateTime.now(), false, 1));
+                LocalDateTime.now(), false, 1, 0));
         save(new Vacancy(0, "Junior+ Java Developer", "text",
-                LocalDateTime.now(), false, 1));
+                LocalDateTime.now(), false, 1, 0));
         save(new Vacancy(0, "Middle Java Developer", "text",
-                LocalDateTime.now(), false, 1));
+                LocalDateTime.now(), false, 1, 0));
         save(new Vacancy(0, "Middle+ Java Developer", "text",
-                LocalDateTime.now(), true, 1));
+                LocalDateTime.now(), true, 1, 0));
         save(new Vacancy(0, "Senior Java Developer", "text",
-                LocalDateTime.now(), true, 1));
+                LocalDateTime.now(), true, 1, 0));
     }
 
     @Override
@@ -54,7 +54,8 @@ public class MemoryVacancyRepository implements CrudRepository<Vacancy> {
                         vacancy.getDescription(),
                         vacancy.getCreationDate(),
                         vacancy.getVisible(),
-                        vacancy.getCityId())) != null;
+                        vacancy.getCityId(),
+                        vacancy.getFileId())) != null;
     }
 
     @Override
