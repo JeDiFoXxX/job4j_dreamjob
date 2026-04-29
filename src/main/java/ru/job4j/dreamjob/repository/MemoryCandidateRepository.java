@@ -19,7 +19,7 @@ public class MemoryCandidateRepository implements CrudRepository<Candidate> {
 
     private final Map<Integer, Candidate> candidates = new ConcurrentHashMap<>();
 
-    private MemoryCandidateRepository() {
+    public MemoryCandidateRepository() {
         save(new Candidate(0, "Ivan Ivanov", "text",
                 LocalDateTime.now(), false, 1, 0));
         save(new Candidate(0, "Petr Petrov", "text",

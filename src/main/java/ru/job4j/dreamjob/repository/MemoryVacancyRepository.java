@@ -19,7 +19,7 @@ public class MemoryVacancyRepository implements CrudRepository<Vacancy> {
 
     private final Map<Integer, Vacancy> vacancies = new ConcurrentHashMap<>();
 
-    private MemoryVacancyRepository() {
+    public MemoryVacancyRepository() {
         save(new Vacancy(0, "Intern Java Developer", "text",
                 LocalDateTime.now(), false, 1, 0));
         save(new Vacancy(0, "Junior Java Developer", "text",

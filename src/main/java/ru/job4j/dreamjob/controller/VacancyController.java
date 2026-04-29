@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Vacancy;
 import ru.job4j.dreamjob.service.CityService;
-import ru.job4j.dreamjob.service.FileService;
 import ru.job4j.dreamjob.service.SimpleFileService;
 import ru.job4j.dreamjob.service.VacancyService;
 
